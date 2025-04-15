@@ -1,98 +1,83 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+Fintech API – NestJS & MySQL
+📌 Project Overview
+This project is a simple fintech backend application built using NestJS and MySQL. It provides functionalities for user account management, financial transactions, balance tracking, and secure authentication using JWT.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+🚀 Features Implemented
+1️⃣ User Account Management
+✔ User registration, login, and authentication using JWT. ✔ Passwords are securely hashed before storing in the database. ✔ User data (name, email, password hash) is stored in MySQL.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+2️⃣ Transaction Management
+✔ Users can perform deposits, withdrawals, and transfers. ✔ Transactions store amount, type, timestamp, and sender/receiver details. ✔ Balances are updated correctly and checked for insufficient funds.
 
-## Description
+3️⃣ Balance Management
+✔ Each transaction updates the user's account balance in real time. ✔ Users can check their current balance via API endpoints. ✔ Ensures accuracy and consistency of financial data.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+4️⃣ Database Integration
+✔ MySQL relational database stores users & transactions. ✔ TypeORM is used to interact with the database efficiently. ✔ Implements data integrity checks for financial operations.
 
-## Project setup
+5️⃣ API Endpoints
+✔ RESTful API endpoints handle CRUD operations for users and transactions. ✔ Includes input validation and error handling for security. ✔ Swagger API documentation enables easy testing & interaction.
 
-```bash
-$ npm install
-```
+🛠 Technologies Used
+✅ NestJS (TypeScript-based backend framework) ✅ MySQL (Relational database) ✅ TypeORM (Database ORM) ✅ JWT (JSON Web Token) (Authentication) ✅ Bcrypt.js (Password hashing) ✅ Swagger (API Documentation)
 
-## Compile and run the project
+🚀 How to Set Up the Project
+1️⃣ Install Dependencies
+sh
+npm install
+2️⃣ Configure .env File
+Create a .env file with the following environment variables:
 
-```bash
-# development
-$ npm run start
+env
+PORT=5000
+JWT_SECRET=your_secure_secret_key
+DB_HOST=localhost
+DB_USER=root
+DB_PASS=password
+DB_NAME=fintech_db
+3️⃣ Run the MySQL Database
+Run this SQL script to create necessary tables:
 
-# watch mode
-$ npm run start:dev
+sql
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    balance DECIMAL(10,2) DEFAULT 0.00,
+    role ENUM('admin', 'user') DEFAULT 'user',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-# production mode
-$ npm run start:prod
-```
+CREATE TABLE transactions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    type ENUM('deposit', 'withdrawal', 'transfer') NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    receiver_id INT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (receiver_id) REFERENCES users(id)
+);
+4️⃣ Start the Server
+Run the following command:
 
-## Run tests
+sh
+npm run start
+The server will start on http://localhost:5000.
 
-```bash
-# unit tests
-$ npm run test
+🔎 API Endpoints
+1️⃣ User Authentication
+✔ POST /api/auth/register → Register new users ✔ POST /api/auth/login → Authenticate users & issue JWT ✔ GET /api/auth/profile → Get user profile (Requires token)
 
-# e2e tests
-$ npm run test:e2e
+2️⃣ Transactions & Balance
+✔ POST /api/transactions/deposit → Deposit money ✔ POST /api/transactions/withdraw → Withdraw money (Checks balance) ✔ POST /api/transactions/transfer → Transfer funds ✔ GET /api/balance → View account balance
 
-# test coverage
-$ npm run test:cov
-```
+3️⃣ Admin Actions
+✔ GET /api/users → View all users (Admin-only) ✔ DELETE /api/users/:id → Delete a user (Admin-only)
 
-## Deployment
+🛠 Swagger API Documentation
+✔ Swagger UI allows easy testing of endpoints. ✔ Access via http://localhost:5000/api/docs. ✔ All API methods are documented with request/response formats.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+📌 Future Enhancements
+✔ Refresh Tokens → Extend session duration ✔ 2FA Authentication → Add extra security ✔ OAuth Login → Google/Facebook authentication ✔ Frontend Dashboard → A React-based UI
